@@ -15,11 +15,11 @@
 | <img src="screenshots/01-cover.png" width="170"> | <img src="screenshots/02-captcha.png" width="170"> | <img src="screenshots/04-quiz.png" width="170"> | <img src="screenshots/06-result-top.png" width="170"> |
 
 <details>
-<summary>展开查看错误提示、选中动效与历史记录</summary>
+<summary>展开查看验证码错误提示、选项选中动效与结果页下半部分</summary>
 
-| 验证码错误 | 选项选中动效 | 历史答题记录 |
+| 验证码错误 | 选项选中动效 | 结果页下半部分 |
 |:---:|:---:|:---:|
-| <img src="screenshots/03-captcha-error.png" width="220"> | <img src="screenshots/05-option-picked.png" width="220"> | <img src="screenshots/08-history-all.png" width="220"> |
+| <img src="screenshots/03-captcha-error.png" width="220"> | <img src="screenshots/05-option-picked.png" width="220"> | <img src="screenshots/07-result-bottom.png" width="220"> |
 
 </details>
 
@@ -30,9 +30,8 @@
 | 功能 | 说明 |
 |---|---|
 | **16 道两难选择** | 每题 4 个选项，无对错，凭第一反应作答；选项标签 64/64 无重复 |
-| **验证码闸门** | 固定码 `1783`，四位数字分格展示；错误抖动提示并阻止进入，通过后方可答题 |
+| **验证码闸门** | 固定码（不显示在页面上，仅站点所有者知晓）；四位数字分格仅作占位引导，错误抖动提示并阻止进入，通过后方可答题 |
 | **选项点击动效** | 选中项朱砂描边 + 抬起 + 一次性回弹，未选项错峰淡出，反馈清晰不阻塞作答 |
-| **历史答题记录** | 结果页展示最近 8 次（可展开全部），含时间、人物、朝代称号、题目数量、契合度 |
 | **四层选择回显** | 每句评价都能倒推到原始作答，不是泛泛的性格描述 |
 | **一键分享文案** | 生成含结果、人格底色、选择轨迹的纯文本，方便粘贴 |
 | **零外部请求** | 无 CDN、无字体外链、无图片文件，雷达图/印章全部内联 SVG / CSS |
@@ -128,7 +127,7 @@
 
 ## 质量保障
 
-- **12 项真实浏览器端到端断言**：用 puppeteer-core 驱动本机 Chrome，覆盖「开始 → 验证码（空/非数字/位数不足/错误码/正确码）→ 逐题作答 → 结果页 → 展开历史 → 再测一次 → 返回封面 → 回车提交」完整链路，**0 JS 错误**。
+- **端到端断言**：用 puppeteer-core 驱动本机 Chrome，覆盖「开始 → 验证码（空/非数字/位数不足/错误码/正确码）→ 逐题作答 → 结果页 → 再测一次 → 返回封面 → 回车提交」完整链路，并断言**验证码不出现在页面可见文本中**，**0 JS 错误**。
 - **算法复核**：200 次随机重启的坐标上升法验证 16 题下 11 位古人全部可达且自洽。
 - **真机截图目检**（390×844 Chrome 移动端仿真）：
   > 这一步抓到一个纯逻辑测试**测不出来**的真 bug——验证码通过后未收起封面，导致封面与答题屏叠加、选项点不动。原因是各屏幕的显隐散落在多个函数里，必然漏一个。修法是抽出统一的 `goto(id)` 切屏函数，只给目标屏加 `active`。**肉眼验收不可省。**
@@ -152,7 +151,7 @@ python -m http.server 8000
 # 访问 http://localhost:8000
 ```
 
-> 验证码固定为 `1783`，仅用于演示"提交前校验"这一交互，不具备真实防机器能力。
+> 验证码为固定值，**不显示在页面上**，仅站点所有者知晓，源码中定义于 `CAPTCHA_CODE`。仅用于演示"提交前校验"这一交互，不具备真实防机器能力。
 
 ---
 
@@ -160,7 +159,7 @@ python -m http.server 8000
 
 ```
 guofeng-identity-h5/
-├── index.html          # 完整应用（HTML + CSS + JS 全部内联，约 67 KB）
+├── index.html          # 完整应用（HTML + CSS + JS 全部内联，约 61 KB）
 ├── screenshots/        # README 展示用预览图
 └── README.md
 ```

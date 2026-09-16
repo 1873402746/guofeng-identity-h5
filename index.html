@@ -393,41 +393,6 @@ body{
   margin-top:20px;text-align:center;font-size:11.5px;color:var(--ink3);
   letter-spacing:.06em;line-height:1.9;
 }
-
-/* ============ 历史答题记录 ============ */
-.hist-list{display:flex;flex-direction:column;gap:0;}
-.hist-row{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 2px;border-bottom:1px dashed var(--line);
-  animation:fadeIn .4s ease both;
-}
-.hist-row:last-child{border-bottom:0;}
-.hist-seal{
-  flex:0 0 34px;height:34px;border-radius:50%;
-  display:grid;place-items:center;
-  font-family:var(--serif);font-size:15px;color:#FFF6EC;
-  background:linear-gradient(148deg,#C8463C,#9E2A23);
-  box-shadow:0 3px 8px rgba(185,58,50,.22);
-}
-.hist-main{flex:1;min-width:0;}
-.hist-name{
-  font-family:var(--serif);font-size:14px;letter-spacing:.08em;
-  color:var(--ink);margin:0 0 3px;
-}
-.hist-metas{font-size:11px;color:var(--ink3);letter-spacing:.04em;}
-.hist-metas i{font-style:normal;margin:0 5px;color:var(--gold);}
-.hist-end{text-align:right;flex:0 0 auto;}
-.hist-score{
-  font-family:var(--serif);font-size:16px;color:var(--cinnabar);
-  letter-spacing:.02em;line-height:1.2;
-}
-.hist-score em{font-style:normal;font-size:10.5px;color:var(--ink3);margin-left:1px;}
-.hist-q{font-size:10.5px;color:var(--ink3);letter-spacing:.04em;margin-top:3px;}
-.hist-note{
-  font-size:11px;color:var(--ink3);letter-spacing:.06em;
-  text-align:center;line-height:1.9;margin:14px 0 0;
-}
-.hist-note b{color:var(--ink2);font-weight:600;}
 </style>
 </head>
 <body data-page-node-id="nyvHgpkdjwDCacv7ujUnRW">
@@ -463,7 +428,7 @@ body{
       <span class="corner tl" data-page-node-id="CapTn1AbCdEfGhIjKlMnOp"></span><span class="corner tr" data-page-node-id="CapTn2AbCdEfGhIjKlMnOp"></span>
       <span class="corner bl" data-page-node-id="CapTn3AbCdEfGhIjKlMnOp"></span><span class="corner br" data-page-node-id="CapTn4AbCdEfGhIjKlMnOp"></span>
       <h2 class="cap-title" data-page-node-id="CapTtl5AbCdEfGhIjKlMnO">验 证 码</h2>
-      <p class="cap-sub" data-page-node-id="CapSub6AbCdEfGhIjKlMnO">请照下方四位数字输入，<br data-page-node-id="CapBr7AbCdEfGhIjKlMnOp">验证通过后方可开始答题。</p>
+      <p class="cap-sub" data-page-node-id="CapSub6AbCdEfGhIjKlMnO">请输入四位验证码，<br data-page-node-id="CapBr7AbCdEfGhIjKlMnOp">验证通过后方可开始答题。</p>
 
       <div class="cap-code" id="capCode" data-page-node-id="CapCod8AbCdEfGhIjKlMnO"></div>
 
@@ -552,14 +517,6 @@ body{
           <div class="ct" id="rCt" data-page-node-id="pbhs9zFnnKHWtMUG7CzBbv"></div>
         </div>
       </div>
-    </div>
-
-    <div class="sect" data-page-node-id="HisSect0AbCdEfGhIjKlM">
-      <div class="sect-t" data-page-node-id="HisTtl1AbCdEfGhIjKlMnO">我的历史答题记录<em id="rHistoryTag" data-page-node-id="HisEm2AbCdEfGhIjKlMnO">最近 8 次</em></div>
-      <div class="card" data-page-node-id="HisCard3AbCdEfGhIjKlMn">
-        <div class="hist-list" id="rHistory" data-page-node-id="HisLst4AbCdEfGhIjKlMn"></div>
-      </div>
-      <p class="hist-note" id="rHistoryNote" data-page-node-id="HisNte5AbCdEfGhIjKlMn"></p>
     </div>
 
     <div class="res-actions" data-page-node-id="7Nl28uRdM1F6jmAXZtE8Vw">
@@ -1148,88 +1105,6 @@ function showResult(){
     '他的活法你几乎一样都不占——这不代表谁更好，只说明你天生缺一块他那样的拼图。身边若有一个"'+far.name+'"，你的人生会稳很多。';
 
   goto('screen-result');
-
-  renderHistory(f, pct);
-}
-
-/* ==========================================================
-   七之二、历史答题记录
-   存档数据与「本次成绩」结构一致：
-   { t:时间, n:题目数量, s:契合度得分, f:人物对象 }
-   ========================================================== */
-const HISTORY = [
-  { t:'2026-09-11 10:32', n:16, s:94, f:{char:'李', name:'李白',   dynasty:'唐',  title:'诗仙'} },
-  { t:'2026-09-10 21:47', n:16, s:91, f:{char:'苏', name:'苏轼',   dynasty:'宋',  title:'东坡居士'} },
-  { t:'2026-09-09 19:05', n:16, s:89, f:{char:'诸', name:'诸葛亮', dynasty:'三国', title:'卧龙'} },
-  { t:'2026-09-08 22:18', n:16, s:93, f:{char:'陶', name:'陶渊明', dynasty:'东晋', title:'五柳先生'} },
-  { t:'2026-09-06 15:44', n:16, s:87, f:{char:'王', name:'王阳明', dynasty:'明',  title:'心学宗师'} },
-  { t:'2026-09-04 09:26', n:16, s:90, f:{char:'曹', name:'曹操',   dynasty:'三国', title:'魏武帝'} },
-  { t:'2026-09-02 20:59', n:16, s:85, f:{char:'徐', name:'徐霞客', dynasty:'明',  title:'游圣'} },
-  { t:'2026-08-30 14:12', n:16, s:92, f:{char:'庄', name:'庄子',   dynasty:'战国', title:'南华真人'} },
-  { t:'2026-08-27 11:03', n:16, s:88, f:{char:'李', name:'李清照', dynasty:'宋',  title:'易安居士'} },
-  { t:'2026-08-24 20:31', n:16, s:90, f:{char:'杜', name:'杜甫',   dynasty:'唐',  title:'诗圣'} },
-  { t:'2026-08-21 16:08', n:16, s:86, f:{char:'武', name:'武则天', dynasty:'唐',  title:'则天大圣皇帝'} }
-];
-
-// 把某次成绩压成一条记录（字段与 HISTORY 一致）
-function makeRecord(f, pct, when){
-  const d = when || new Date();
-  const p2 = x => String(x).padStart(2,'0');
-  return {
-    t: d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+
-       ' '+p2(d.getHours())+':'+p2(d.getMinutes()),
-    n: QUESTIONS.length,
-    s: pct,
-    f: {char:f.char, name:f.name, dynasty:f.dynasty, title:f.title}
-  };
-}
-
-// 每屏渲染多少条（翻页用）
-const HIST_PAGE = 8;
-let histShown = HIST_PAGE;
-
-function renderHistory(f, pct){
-  // 每次进入结果页，本次成绩插到最前（同一分钟内的重复记录合并，避免刷分堆叠）
-  const cur = makeRecord(f, pct);
-  const same = HISTORY[0] && HISTORY[0].f.name === cur.f.name &&
-               HISTORY[0].t.slice(0,16) === cur.t.slice(0,16);
-  if(!same) HISTORY.unshift(cur);
-  histShown = HIST_PAGE;
-
-  paintHistory();
-
-  const box = el('rHistoryNote');
-  if(HISTORY.length > HIST_PAGE){
-    box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · '+
-      '<span class="hist-more" id="histMore">查看更早的记录 ↓</span>';
-    el('histMore').addEventListener('click',()=>{
-      histShown = HISTORY.length;
-      paintHistory();
-      box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · 已显示全部记录';
-    });
-  } else {
-    box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · 记录仅保存在本机浏览器';
-  }
-}
-
-function paintHistory(){
-  const rows = HISTORY.slice(0, histShown).map((h,i)=>
-    '<div class="hist-row" style="animation-delay:'+(i*45)+'ms">'+
-      '<div class="hist-seal">'+h.f.char+'</div>'+
-      '<div class="hist-main">'+
-        '<p class="hist-name">'+h.f.name+'</p>'+
-        '<div class="hist-metas">'+h.t+'<i>·</i>'+h.f.dynasty+'<i>·</i>'+h.f.title+'</div>'+
-      '</div>'+
-      '<div class="hist-end">'+
-        '<div class="hist-score">'+h.s+'<em>%</em></div>'+
-        '<div class="hist-q">'+h.n+' 题</div>'+
-      '</div>'+
-    '</div>'
-  ).join('');
-  el('rHistory').innerHTML = rows || '<p class="hist-note">还没有记录，这一条就是你的第一条。</p>';
-  // 小标签跟随展开状态：只显示了一部分时写「最近 N 次」，全部展示后写次数
-  el('rHistoryTag').textContent = histShown < HISTORY.length
-    ? '最近 '+histShown+' 次' : '共 '+HISTORY.length+' 次';
 }
 
 /* ==========================================================
@@ -1291,10 +1166,10 @@ function goto(target){
   window.scrollTo(0,0);
 }
 
-// 渲染验证码数字格（逐个错峰入场）
+// 渲染四个占位格：只作视觉引导，不暴露真实验证码
 function renderCaptcha(){
-  el('capCode').innerHTML = CAPTCHA_CODE.split('').map((c,i)=>
-    '<i style="animation-delay:'+(i*80)+'ms">'+c+'</i>'
+  el('capCode').innerHTML = [0,1,2,3].map((_,i)=>
+    '<i style="animation-delay:'+(i*80)+'ms">?</i>'
   ).join('');
 }
 
@@ -1332,7 +1207,7 @@ function submitCaptcha(){
     return;
   }
   if(v !== CAPTCHA_CODE){
-    showCapError('验证码不正确，请照上方数字重新输入');
+    showCapError('验证码不正确，请重新输入');
     inp.value = '';
     inp.focus();
     return;
