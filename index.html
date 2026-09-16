@@ -48,7 +48,7 @@ body{
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes sealPop{0%{opacity:0;transform:scale(.6) rotate(-18deg);}60%{opacity:1;transform:scale(1.06) rotate(-4deg);}100%{opacity:1;transform:scale(1) rotate(-3deg);}}
-@keyframes slideIn{from{opacity:0;transform:translateX(22px);}to{opacity:1;transform:none;}}
+}
 @keyframes growBar{from{width:0;}}
 
 /* ============ 封面 ============ */
@@ -123,7 +123,7 @@ body{
 .q-dots i.now{background:var(--cinnabar);transform:scale(1.5);}
 .bar-wrap{height:3px;background:rgba(36,31,26,.09);border-radius:3px;overflow:hidden;margin-bottom:30px;}
 .bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--cinnabar));border-radius:3px;transition:width .45s cubic-bezier(.3,.9,.3,1);}
-#qWrap.slide{animation:slideIn .38s cubic-bezier(.22,.8,.3,1) both;}
+
 .q-no{
   display:inline-flex;align-items:center;justify-content:center;
   font-family:var(--serif);font-size:11px;letter-spacing:.18em;text-indent:.18em;
@@ -141,68 +141,19 @@ body{
   padding:16px 15px;cursor:pointer;font-family:var(--sans);
   font-size:14.5px;line-height:1.6;color:var(--ink);
   box-shadow:0 1px 2px rgba(36,31,26,.03);
-  transition:transform .28s cubic-bezier(.22,.9,.3,1),border-color .28s ease,
-             background .32s ease,box-shadow .28s ease,opacity .3s ease;
-  animation:fadeUp .42s cubic-bezier(.22,.8,.3,1) both;position:relative;overflow:hidden;
-  will-change:transform;
+  position:relative;overflow:hidden;
 }
-/* 左侧朱砂竖条：选中时自上而下拉开 */
-.opt::after{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,var(--cinnabar-l),var(--cinnabar));
-  transform:scaleY(0);transform-origin:top;
-  transition:transform .32s cubic-bezier(.3,.9,.3,1);
-}
-/* 掠过时的一层极浅底色，静默给出「可点」暗示 */
-.opt::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(120% 100% at 0% 0%,var(--cinnabar-t),transparent 62%);
-  opacity:0;transition:opacity .3s ease;
-}
-@media (hover:hover){
-  .opt:hover{border-color:rgba(185,58,50,.34);transform:translateY(-1px);
-    box-shadow:0 6px 16px rgba(36,31,26,.07);}
-  .opt:hover::before{opacity:1;}
-}
-.opt:active{transform:scale(.982);transition-duration:.11s;}
+.opt:active{background:var(--cinnabar-t);}
 .opt .k{
   flex:0 0 24px;height:24px;border-radius:50%;border:1px solid rgba(36,31,26,.22);
   display:grid;place-items:center;font-size:11.5px;font-family:var(--serif);
   color:var(--ink2);margin-top:1px;background:rgba(255,255,255,.6);
-  transition:background .26s ease,color .26s ease,border-color .26s ease,
-             transform .3s cubic-bezier(.22,.9,.3,1),box-shadow .26s ease;
 }
-/* 选中态：高亮 + 朱砂描边 + 轻微抬起；配合 JS 的 picked 类播放一次回弹 */
+/* 选中态：只做静态高亮，不加过渡与位移 */
 .opt.picked{
-  border-color:var(--cinnabar);
-  background:linear-gradient(135deg,var(--cinnabar-t),rgba(185,58,50,.12));
-  box-shadow:0 9px 24px rgba(185,58,50,.16);
-  transform:translateY(-2px);
+  border-color:var(--cinnabar);background:var(--cinnabar-t);
 }
-.opt.picked::after{transform:scaleY(1);}
-.opt.picked::before{opacity:1;}
-.opt.picked .k{
-  background:var(--cinnabar);border-color:var(--cinnabar);color:#FFF6EC;
-  transform:scale(1.1);
-  box-shadow:0 3px 9px rgba(185,58,50,.32);
-}
-/* 选中瞬间的一次性回弹，让「按下 → 选中」有落点感 */
-.opt.picked.beat{animation:optBeat .5s cubic-bezier(.22,.9,.3,1) both;}
-@keyframes optBeat{
-  0%{transform:translateY(0) scale(1);}
-  32%{transform:translateY(-2px) scale(1.028);}
-  62%{transform:translateY(-2px) scale(.994);}
-  100%{transform:translateY(-2px) scale(1);}
-}
-/* 未选中项：淡出并轻微下沉，视觉焦点让给选中项 */
-.opt.dim{
-  opacity:.34;transform:translateY(3px) scale(.985);
-  filter:saturate(.7);
-}
-@media (prefers-reduced-motion:reduce){
-  .opt,.opt::after,.opt::before,.opt .k{transition-duration:.01ms;}
-  .opt.picked.beat{animation:none;}
-}
+.opt.picked .k{background:var(--cinnabar);border-color:var(--cinnabar);color:#FFF6EC;}
 .q-back{
   margin-top:26px;text-align:center;font-size:12.5px;color:var(--ink3);
   letter-spacing:.1em;cursor:pointer;user-select:none;
@@ -543,13 +494,24 @@ const DIMS = [
 const DK = DIMS.map(d=>d.k);
 
 /* ==========================================================
-   二、题目：每题 4 选项，选项 = 一句话 + 一个可回显的标签 + 五维加分
+   二、题库：共 32 题，每次测试随机抽 16 题
+   每题 4 选项，选项 = 一句话 + 一个可回显的标签 + 五维加分
    计分结构：主维度 +3，并带一条「性格联动」+1
    志→韧（有目标的人扛得住）、谋→志（会谋划的人图得远）、
    韧→谋（能熬的人必然在盘算）、情→韧（在意别人的人才扛得久）、
    逸→情（要自由的人感受力都强）
+
+   抽题规则（见 buildRun）：
+     范围 = QUESTION_POOL 全部 32 题；数量 = 每次 16 题
+     抽法 = 洗牌后取前 16（无放回随机抽样），并把每题的 4 个选项也洗牌
+     每开一局（首次进入 / 验证码通过后 / 点「再测一次」）都重新抽一次
+
+   为什么新题要和旧题「维度排除数」一致：
+     每题 4 个选项覆盖 5 维中的 4 维，未覆盖的那维在该题最高分只能是 0（或联动的 +1）。
+     旧 16 题的排除数是 志4/谋4/情2/逸2/韧4，新 16 题必须完全相同，
+     任意抽出的 16 题才有稳定、可比的满分上限，古人指纹才不会失真。
    ========================================================== */
-const QUESTIONS = [
+const QUESTION_POOL = [
   {
     q:'一个完全空白的周末，你最可能怎么过？',
     o:[
@@ -693,8 +655,205 @@ const QUESTIONS = [
       {t:'过程里把某个人忽略了', tag:'过程里忽略了人', s:{qing:3, ren:1}},
       {t:'这件事已经不能让我兴奋了', tag:'不能再让我兴奋', s:{yi:3, qing:1}}
     ]
+  },
+
+  /* ---------- 以下 16 题为新增，排除数仍为 志4/谋4/情2/逸2/韧4 ---------- */
+  {
+    q:'如果突然多出一笔不算大的钱，你最可能？',
+    o:[
+      {t:'投进那件一直想做的大事里', tag:'砸进那件大事', s:{zhi:3, ren:1}},
+      {t:'先放一放，想清楚它的去处再动', tag:'先想清楚去处', s:{mou:3, zhi:1}},
+      {t:'请在乎的人好好吃一顿', tag:'请在乎的人吃顿好的', s:{qing:3, ren:1}},
+      {t:'买张车票，出去走走再说', tag:'买张车票就走', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'和一个人约好见面，对方迟到整整一小时。你会？',
+    o:[
+      {t:'利用这一小时，把手边的事先处理掉', tag:'把等待变成时间', s:{mou:3, zhi:1}},
+      {t:'继续等，说好了就得等到底', tag:'说好了就等到底', s:{ren:3, mou:1}},
+      {t:'先担心他是不是出了什么事', tag:'先担心他出事了', s:{qing:3, ren:1}},
+      {t:'自己去附近逛逛，他到了再说', tag:'自己先逛起来', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'手上有件很难啃的活，死线就在眼前。你会？',
+    o:[
+      {t:'通宵也要在死线前把它拿下', tag:'通宵也要拿下', s:{zhi:3, ren:1}},
+      {t:'拆成小块，先啃最关键的那块', tag:'先啃最关键那块', s:{mou:3, zhi:1}},
+      {t:'找人一起做，别一个人死扛', tag:'找人一起做', s:{qing:3, ren:1}},
+      {t:'按自己的节奏来，急也急不来', tag:'急也急不来', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'朋友开口向你借一笔不小的钱，你会？',
+    o:[
+      {t:'先问清用途和打算，再决定借不借', tag:'先问清用途', s:{mou:3, zhi:1}},
+      {t:'借了就不打算催，受得了才借', tag:'受得了才借', s:{ren:3, mou:1}},
+      {t:'他开口不容易，尽量帮一把', tag:'他开口不容易', s:{qing:3, ren:1}},
+      {t:'不太想借，关系归关系', tag:'关系归关系', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'你身上有一样长处，你最希望它换来什么？',
+    o:[
+      {t:'被看见、被认可，有分量', tag:'被看见被认可', s:{zhi:3, ren:1}},
+      {t:'帮我把事情想得更透', tag:'把事情想得更透', s:{mou:3, zhi:1}},
+      {t:'让身边人过得好一点', tag:'让身边人好过一点', s:{qing:3, ren:1}},
+      {t:'换来更多自由选择的余地', tag:'换来更多自由', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'深夜收到一条多年没联系的老友消息，你会？',
+    o:[
+      {t:'约个确切时间，见面当面聊', tag:'约时间当面聊', s:{zhi:3, ren:1}},
+      {t:'立刻回，问他最近过得好不好', tag:'秒回问他好不好', s:{qing:3, ren:1}},
+      {t:'回了，但不刻意维持热度', tag:'回了但不热络', s:{yi:3, qing:1}},
+      {t:'认真回一条长的，把这些年补上', tag:'回一条长的补上', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'轮到你上台发言，还有五分钟。此刻的你更像？',
+    o:[
+      {t:'有点兴奋，终于轮到我了', tag:'终于轮到我了', s:{zhi:3, ren:1}},
+      {t:'最后再过一遍要点', tag:'最后过一遍要点', s:{mou:3, zhi:1}},
+      {t:'无所谓，说砸了大不了笑笑', tag:'说砸了大不了笑笑', s:{yi:3, qing:1}},
+      {t:'深呼吸，告诉自己稳得住', tag:'告诉自己稳得住', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'如果给自己放三个月长假，你会？',
+    o:[
+      {t:'学一门一直想学的硬本事', tag:'学一门硬本事', s:{zhi:3, ren:1}},
+      {t:'回家陪父母住一阵子', tag:'回家陪父母一阵', s:{qing:3, ren:1}},
+      {t:'什么也不计划，睡够了再说', tag:'睡够了再说', s:{yi:3, qing:1}},
+      {t:'去做一件体力上的苦差事', tag:'去做件苦差事', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'你发现现在走的路不太对，但已经走了很远。你会？',
+    o:[
+      {t:'重新算一遍成本，再决定换不换', tag:'先算一遍成本', s:{mou:3, zhi:1}},
+      {t:'再撑一段，也许就差一点', tag:'也许就差一点', s:{ren:3, mou:1}},
+      {t:'先听听在乎的人怎么想', tag:'听在乎的人怎么想', s:{qing:3, ren:1}},
+      {t:'掉头就走，沉没的就算了', tag:'掉头就走', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'待办里每一件都标着"紧急"，你会先做哪一类？',
+    o:[
+      {t:'按重要程度重新排个序', tag:'先排个序', s:{mou:3, zhi:1}},
+      {t:'闭着眼先做，做一件少一件', tag:'做一件少一件', s:{ren:3, mou:1}},
+      {t:'先回消息，别让人干等着', tag:'先回消息别让人等', s:{qing:3, ren:1}},
+      {t:'挑最顺手的先解决掉', tag:'挑顺手的先来', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'你被人当众误解，曲解了你的意思。你会？',
+    o:[
+      {t:'当场澄清，一句句说清楚', tag:'当场一句句澄清', s:{zhi:3, ren:1}},
+      {t:'先顾全场，私下再解释', tag:'私下再解释', s:{qing:3, ren:1}},
+      {t:'误解就误解，懂的人自然懂', tag:'懂的人自然懂', s:{yi:3, qing:1}},
+      {t:'不争，以后用行动证明', tag:'以后用行动证明', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'如果可以回到过去改动某一天，你会？',
+    o:[
+      {t:'去抓住那次被我错过的机会', tag:'去抓那次机会', s:{zhi:3, ren:1}},
+      {t:'去好好和一个人告别', tag:'去好好告别一次', s:{qing:3, ren:1}},
+      {t:'不改，现在这样也挺好', tag:'现在这样也挺好', s:{yi:3, qing:1}},
+      {t:'不改，正是那些事把我撑到今天', tag:'那些事撑我到今天', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'团队里出了纰漏，责任并不全在你。你会？',
+    o:[
+      {t:'先把事情补上，别的以后再说', tag:'先把事情补上', s:{zhi:3, ren:1}},
+      {t:'把来龙去脉理清，谁的责任就清楚了', tag:'理清来龙去脉', s:{mou:3, zhi:1}},
+      {t:'不是我的，我不背', tag:'不是我的不背', s:{yi:3, qing:1}},
+      {t:'认下大头，先让事情翻篇', tag:'认下先让事翻篇', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'十年之后，你最可能是什么样子？',
+    o:[
+      {t:'在自己的领域里立住了', tag:'在领域里立住了', s:{zhi:3, ren:1}},
+      {t:'活明白了，知道自己要什么', tag:'知道自己要什么', s:{mou:3, zhi:1}},
+      {t:'被一群真心的人围着', tag:'被真心的人围着', s:{qing:3, ren:1}},
+      {t:'还是那个扛得住事的人', tag:'还是扛得住事', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'如果人生能重来一次，你会？',
+    o:[
+      {t:'更早开始，把想赢的都赢一遍', tag:'更早开始赢一遍', s:{zhi:3, ren:1}},
+      {t:'少踩几个坑，路走得更聪明', tag:'路走得更聪明', s:{mou:3, zhi:1}},
+      {t:'对在乎的人再好一点', tag:'对在乎的人再好一点', s:{qing:3, ren:1}},
+      {t:'换个活法，去完全不一样的地方', tag:'换个活法', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'别人当众夸你的时候，你心里最真实的反应是？',
+    o:[
+      {t:'还不够，我可以做得更好', tag:'还不够可以更好', s:{zhi:3, ren:1}},
+      {t:'他夸的是哪一点，是不是真的', tag:'先想是不是真的', s:{mou:3, zhi:1}},
+      {t:'被看见了，心里挺暖的', tag:'被看见挺暖的', s:{qing:3, ren:1}},
+      {t:'听听就好，别太当真', tag:'听听就好别当真', s:{yi:3, qing:1}}
+    ]
   }
 ];
+
+/* ----------------------------------------------------------
+   抽题规则
+     范围：QUESTION_POOL 全部 32 题
+     数量：每次一局固定 16 题
+
+     抽法（分层随机，不是全库简单随机）：
+       先按「该题未覆盖的那一维」把 32 题分成 5 组，再按固定配额
+       志4 / 谋4 / 情2 / 逸2 / 韧4 从各组随机抽取，最后打乱顺序，
+       并把每题的 4 个选项顺序也打乱（A/B/C/D 不再固定）。
+
+     为什么不全库随便抽 16 题：
+       某一维的满分 = 3×(16 - 该维被排除的题数) + 被排除时可能的 +1，
+       只取决于「排除分布」。全库随机抽会让排除分布飘，
+       实测每维满分会在 34~46 之间摆动，古人指纹的可达率掉到 86.7%，
+       最差相关系数只有 0.978。锁死配额后每维满分恒为
+       40/40/44/42/40，任意一局的可达率都是 11/11。
+   ---------------------------------------------------------- */
+const RUN_QUOTA = { zhi:4, mou:4, qing:2, yi:2, ren:4 };
+const RUN_SIZE  = DK.reduce((s,k)=> s + RUN_QUOTA[k], 0);   // = 16
+
+function shuffle(arr){
+  const r = arr.slice();
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = r[i]; r[i] = r[j]; r[j] = t;
+  }
+  return r;
+}
+
+// 每题 4 个选项覆盖 5 维中的 4 维，返回那道"没被覆盖"的维度
+function excludedDim(q){
+  const mains = q.o.map(o=> Object.keys(o.s).reduce((a,b)=> o.s[a] >= o.s[b] ? a : b));
+  return DK.find(k=> mains.indexOf(k) < 0);
+}
+
+// 按未覆盖维度分组，抽题时按配额从各组取
+const POOL_BY_EXCL = {};
+DK.forEach(k=>{ POOL_BY_EXCL[k] = QUESTION_POOL.filter(q=> excludedDim(q) === k); });
+
+function buildRun(){
+  const picked = [];
+  DK.forEach(k=>{
+    picked.push.apply(picked, shuffle(POOL_BY_EXCL[k]).slice(0, RUN_QUOTA[k]));
+  });
+  // 题目顺序打乱 + 每题选项顺序打乱
+  return shuffle(picked).map(q=>({ q:q.q, o:shuffle(q.o) }));
+}
+
+// 当前这一局的题目（每次开一局都会重建）
+let QUESTIONS = buildRun();
 
 /* ==========================================================
    三、十一面镜子：古人人格指纹 [志, 谋, 情, 逸, 韧]
@@ -840,9 +999,15 @@ const FIGURES = [
 const state = { idx:0, picks:new Array(QUESTIONS.length).fill(null), top:null };
 const el = id => document.getElementById(id);
 
-/* 每维理论满分（用于归一化，避免不同维度题量不均导致偏差） */
+/* 每维理论满分（用于归一化，避免不同维度题量不均导致偏差）
+   随机抽题后本局题目会变，所以每次开新一局都要重算一遍 */
 const MAXRAW = {};
-DK.forEach(k=>MAXRAW[k] = QUESTIONS.reduce((s,q)=> s + Math.max.apply(null, q.o.map(o=>o.s[k]||0)), 0));
+function recalcMax(){
+  DK.forEach(k=>{
+    MAXRAW[k] = QUESTIONS.reduce((s,q)=> s + Math.max.apply(null, q.o.map(o=>o.s[k]||0)), 0);
+  });
+}
+recalcMax();
 
 function scoreUser(){
   const raw = {}; DK.forEach(k=>raw[k]=0);
@@ -933,7 +1098,7 @@ function renderQuestion(){
   const box = el('qOpts');
   box.innerHTML = q.o.map((o,i)=>{
     const picked = state.picks[state.idx]===i ? ' picked':'';
-    return '<button class="opt'+picked+'" data-i="'+i+'" style="animation-delay:'+(i*55)+'ms">'+
+    return '<button class="opt'+picked+'" data-i="'+i+'">'+
              '<span class="k">'+KEYS[i]+'</span><span class="tx">'+o.t+'</span>'+
            '</button>';
   }).join('');
@@ -942,41 +1107,19 @@ function renderQuestion(){
     btn.addEventListener('click',()=>pick(+btn.dataset.i));
   });
   renderDots();
-
-  const w = el('qWrap');
-  w.classList.remove('slide'); void w.offsetWidth; w.classList.add('slide');
 }
 
 let locked = false;
 function pick(i){
   if(locked) return;
   locked = true;
-  const q = QUESTIONS[state.idx];
   state.picks[state.idx] = i;
   el('qBar').style.width = ((state.idx+1)/QUESTIONS.length*100)+'%';
   renderDots();
 
-  // 选中项：先回弹一下再定住；其余项：错峰淡出，视觉焦点交给选中项
+  // 选中项直接高亮，不做任何过渡动画
   const btns = el('qOpts').querySelectorAll('.opt');
-  btns.forEach((b,bi)=>{
-    if(bi === i){
-      b.classList.add('picked');
-      // 先移除再强制回流，保证连续作答时每次都能重放回弹
-      b.classList.remove('beat'); void b.offsetWidth; b.classList.add('beat');
-    } else {
-      b.style.transitionDelay = (Math.abs(bi-i)*38)+'ms';
-      b.classList.add('dim');
-    }
-  });
-
-  // 选中项也轻轻向下滚动到视野中部附近（仅当选项在屏幕下方时）
-  const sel = btns[i];
-  if(sel){
-    const r = sel.getBoundingClientRect();
-    if(r.bottom > window.innerHeight - 12){
-      window.scrollBy({top: Math.min(r.bottom - window.innerHeight + 90, 140), behavior:'smooth'});
-    }
-  }
+  btns.forEach((b,bi)=>{ if(bi === i) b.classList.add('picked'); });
 
   setTimeout(()=>{
     locked = false;
@@ -985,7 +1128,7 @@ function pick(i){
     } else {
       showResult();
     }
-  }, 430);
+  }, 240);
 }
 
 el('qBack').addEventListener('click',()=>{
@@ -1147,15 +1290,30 @@ el('btnCopy').addEventListener('click',()=>{
   }
 });
 
-el('btnRetry').addEventListener('click',()=>{
-  el('btnCaptcha').textContent = '确 认 并 开 始';  // 复位可能的「验证通过」文案
-  reset('screen-cover');
-});
-
 /* ----------------------------------------------------------
    九、验证码：固定码，验证通过才放行进入答题
+
+   校验时机（每"一轮"测试只校验一次）：
+     1) 进入答题之前必须验证——封面点「开始测试」、或结果页点「再测一次」
+        都会先回到验证码屏；
+     2) 通过之后可以一口气答完本轮 16 题，答题过程中不再校验；
+     3) 点「再测一次」等于开启新的一轮，需要重新输入验证码。
    ---------------------------------------------------------- */
 const CAPTCHA_CODE = '1783';
+
+// 当前这一轮是否已通过验证（通过后方可答题，中途不再重复校验）
+let captchaOk = false;
+
+// 进入验证码屏：清空上一轮的输入与提示，等待重新校验
+function openCaptcha(){
+  captchaOk = false;
+  el('btnCaptcha').textContent = '确 认 并 开 始';
+  el('capInput').value = '';
+  clearCapError();
+  renderCaptcha();
+  goto('screen-captcha');
+  setTimeout(()=>el('capInput').focus(), 260);
+}
 
 // 屏幕切换：统一收口，避免各处分头 remove/add 漏掉某一屏
 function goto(target){
@@ -1213,7 +1371,8 @@ function submitCaptcha(){
     return;
   }
 
-  // 通过：短暂锁定防重复点击，清空错误态后放行
+  // 通过：本轮校验完成，锁定片刻防重复点击后放行
+  captchaOk = true;
   capLocked = true;
   const btn = el('btnCaptcha');
   btn.textContent = '验 证 通 过';
@@ -1221,8 +1380,8 @@ function submitCaptcha(){
   setTimeout(()=>{
     capLocked = false;
     btn.textContent = '确 认 并 开 始';
-    reset(null);           // 先清空作答并从第一题渲染
-    goto('screen-quiz');   // 再统一切屏（保证封面/验证码屏被收起）
+    reset(null);           // 开新一局：重新随机抽 16 题 + 清空作答
+    goto('screen-quiz');   // 统一切屏（保证封面/验证码屏被收起）
   }, 420);
 }
 
@@ -1245,21 +1404,29 @@ el('capBack').addEventListener('click',()=>{
 });
 
 el('btnStart').addEventListener('click',()=>{
-  reset(null);                       // 只清数据，不切屏
-  el('capInput').value = '';
-  clearCapError();
-  renderCaptcha();
-  goto('screen-captcha');
-  setTimeout(()=>el('capInput').focus(), 260);
+  openCaptcha();   // 从封面进入：先验证，通过后再开始新的一轮
 });
 
-// 重置作答数据。target 传屏幕 id 则一并切屏；不传则只清数据（调用方自行切屏）
-function reset(target){
+// 结果页「再测一次」：开启新的一轮——重新抽题，并重新输入验证码
+el('btnRetry').addEventListener('click',()=>{
+  newRun();        // 立刻重置本轮状态并重新随机抽题（尚未切屏）
+  openCaptcha();   // 回到验证码屏，校验通过后才进入新一轮答题
+});
+
+// 开新一局：重新随机抽 RUN_SIZE 题 → 重算每维满分 → 清空作答
+function newRun(){
+  QUESTIONS = buildRun();
+  recalcMax();
   state.idx = 0;
   state.picks = new Array(QUESTIONS.length).fill(null);
   state.top = null;
   el('qBar').style.width = '0%';
   renderQuestion();
+}
+
+// 重置：开新一局；target 传屏幕 id 则一并切屏，不传则只重置数据
+function reset(target){
+  newRun();
   if(typeof target === 'string') goto(target);
   else window.scrollTo(0,0);
 }
