@@ -1293,18 +1293,18 @@ el('btnCopy').addEventListener('click',()=>{
 /* ----------------------------------------------------------
    九、验证码：固定码，验证通过才放行进入答题
 
-   校验时机（每"一轮"测试只校验一次）：
-     1) 进入答题之前必须验证——封面点「开始测试」、或结果页点「再测一次」
-        都会先回到验证码屏；
-     2) 通过之后可以一口气答完本轮 16 题，答题过程中不再校验；
-     3) 点「再测一次」等于开启新的一轮，需要重新输入验证码。
+   校验时机（整个会话只校验一次）：
+     1) 第一次进入答题前必须验证——封面点「开始测试」会先回到验证码屏；
+     2) 通过之后即可答题，本轮 16 题答完、以及之后每一次「再测一次」
+        都不再要求输入验证码（见 btnRetry）；
+     3) 只有重新打开/刷新页面（captchaOk 回到 false）才需要再输一次。
    ---------------------------------------------------------- */
 const CAPTCHA_CODE = '1783';
 
-// 当前这一轮是否已通过验证（通过后方可答题，中途不再重复校验）
+// 本次访问是否已通过验证（通过后方可答题，之后不再重复校验）
 let captchaOk = false;
 
-// 进入验证码屏：清空上一轮的输入与提示，等待重新校验
+// 进入验证码屏：清空上一次的输入与提示，等待校验
 function openCaptcha(){
   captchaOk = false;
   el('btnCaptcha').textContent = '确 认 并 开 始';
@@ -1371,7 +1371,7 @@ function submitCaptcha(){
     return;
   }
 
-  // 通过：本轮校验完成，锁定片刻防重复点击后放行
+  // 通过：本次访问的校验完成，锁定片刻防重复点击后放行
   captchaOk = true;
   capLocked = true;
   const btn = el('btnCaptcha');
@@ -1380,8 +1380,8 @@ function submitCaptcha(){
   setTimeout(()=>{
     capLocked = false;
     btn.textContent = '确 认 并 开 始';
-    reset(null);           // 开新一局：重新随机抽 16 题 + 清空作答
-    goto('screen-quiz');   // 统一切屏（保证封面/验证码屏被收起）
+    // 开新一局：重新随机抽 16 题 + 清空作答 + 进入答题屏
+    reset('screen-quiz');
   }, 420);
 }
 
@@ -1404,13 +1404,15 @@ el('capBack').addEventListener('click',()=>{
 });
 
 el('btnStart').addEventListener('click',()=>{
-  openCaptcha();   // 从封面进入：先验证，通过后再开始新的一轮
+  // 首次进入要先验证；已验证过则直接开新的一局，不再重复要求输入
+  if(captchaOk) reset('screen-quiz');
+  else openCaptcha();
 });
 
-// 结果页「再测一次」：开启新的一轮——重新抽题，并重新输入验证码
+// 结果页「再测一次」：验证码只在首次进入时输过一次，这里直接开新的一轮，
+// 不再回验证码屏（重新随机抽 16 题 + 清空作答 + 切到答题屏）
 el('btnRetry').addEventListener('click',()=>{
-  newRun();        // 立刻重置本轮状态并重新随机抽题（尚未切屏）
-  openCaptcha();   // 回到验证码屏，校验通过后才进入新一轮答题
+  reset('screen-quiz');
 });
 
 // 开新一局：重新随机抽 RUN_SIZE 题 → 重算每维满分 → 清空作答
