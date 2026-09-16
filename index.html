@@ -3,7 +3,7 @@
 <head data-page-node-id="koggOtvJCcLuYoYWBYX9dN">
 <meta charset="UTF-8" data-page-node-id="Uv0XuqgYPejtSHY74rIIP3" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" data-page-node-id="DCEachC3p44RGxWvttiztI" />
-<title>你是哪位古人 · 十六题鉴心</title>
+<title>你是哪位古人 · 随机十六题鉴心</title>
 <style>
 :root{
   --paper:#F5EFE3;
@@ -355,7 +355,7 @@ body{
       <div class="cover-frame" data-page-node-id="D8QoCjU9ldwmFkiKa9BLda">
         <span class="corner tl" data-page-node-id="GIjDeecv0BFIrYwCbD6oYA"></span><span class="corner tr" data-page-node-id="3EzY18yf3ntpIMpEPnYiLC"></span>
         <span class="corner bl" data-page-node-id="Ut7Av6ZvFnKQ8QGDdiDYFa"></span><span class="corner br" data-page-node-id="LBDrX2AJhmV9G3ggQH6Ga1"></span>
-        <div class="eyebrow" data-page-node-id="nvW8UaGcZTI1oEjYtxOfRb">十六题鉴心</div>
+        <div class="eyebrow" data-page-node-id="nvW8UaGcZTI1oEjYtxOfRb">随机十六题鉴心</div>
         <h1 class="big-title" data-page-node-id="43bKPLAezbAU72NbZksXgc">你是<br data-page-node-id="BF1PcNARqkfsNfILhjvd8N"><em data-page-node-id="aZ33sNKjfqr2YDbV5Wvv6s">哪位古人</em></h1>
         <div class="title-rule" data-page-node-id="6NHlrambspl6qwR7urCM1V"><i data-page-node-id="gYgf2kPEQxjyO143PvGIAI"></i><s data-page-node-id="yDhO73T4maHEtFXwruQalQ"></s><i data-page-node-id="iaQlGClyDCbEbTGLdWTFm9"></i></div>
         <p class="cover-sub" data-page-node-id="2gd4ekslB6A8rfLuyjAGKl">十六个两难的选择，<br data-page-node-id="mR7tL8yWDZVGCh9MdDi8cB">照出你骨子里的那点<b data-page-node-id="WYAwdKVOiUVQrgLATCLX6L">古人性情</b>。</p>
@@ -369,7 +369,7 @@ body{
       </div>
 
       <button class="btn" id="btnStart" data-page-node-id="1wjNhkD0fE5NjRqB3bxyZC">开 始 测 试</button>
-      <p class="cover-foot" data-page-node-id="WiCQLD09VvwTXVdrG71QSs">共 16 题 · 无对错 · 请凭第一反应作答<br data-page-node-id="WH0fOfrM6zvsHegEmsSlzs">答完后可一键复制结果，分享给朋友</p>
+      <p class="cover-foot" data-page-node-id="WiCQLD09VvwTXVdrG71QSs">每局随机抽 16 题 · 无对错 · 请凭第一反应作答<br data-page-node-id="WH0fOfrM6zvsHegEmsSlzs">答完后可一键复制结果，分享给朋友</p>
     </div>
   </section>
 
@@ -856,7 +856,7 @@ function buildRun(){
 let QUESTIONS = buildRun();
 
 /* ==========================================================
-   三、十一面镜子：古人人格指纹 [志, 谋, 情, 逸, 韧]
+   三、二十二面镜子：古人人格指纹 [志, 谋, 情, 逸, 韧]
    ========================================================== */
 const FIGURES = [
   {
@@ -990,6 +990,138 @@ const FIGURES = [
     ],
     quote:'丈夫当朝碧海而暮苍梧。', from:'徐霞客《徐霞客游记》',
     echo:'你的选择里有一条很清晰的线：不安于原地，但也不只是图新鲜。你不是在逃离生活，你是在把生活过得更大一点——这正是他走三十年的理由。'
+  },
+  {
+    name:'屈原', dynasty:'战国·楚', title:'辞赋之祖', char:'屈', fp:[5.4,1.9,5.8,2.5,4.1],
+    verdict:'你把理想看得比命重，所以注定走得比谁都疼。',
+    detail:'你身上有一种"宁为玉碎"的洁癖——不是清高，是你真的相信世上应该有对的事，而且愿意为它对到底。你的共情不是软，是硬：正因为你替别人疼，才更不肯把是非含混过去。这条路注定孤独，但你从来没打算换一条走。',
+    traits:[
+      {t:'认定的事，九头牛也拉不回', d:'zhi'},
+      {t:'别人的苦难，你当成自己的', d:'qing'},
+      {t:'跌到底了也不肯改一句口', d:'ren'}
+    ],
+    quote:'路漫漫其修远兮，吾将上下而求索。', from:'《楚辞·离骚》',
+    echo:'你的答案里反复出现同一种姿态：明知代价，仍然选择。这不是固执，是你把"对"看得比"赢"重——这正是他在江边站到最后的原因。'
+  },
+  {
+    name:'老子', dynasty:'春秋', title:'道祖', char:'老', fp:[2.3,4.7,3.2,7.5,1.9],
+    verdict:'你退得比谁都早，因为你比谁都先看明白。',
+    detail:'你不太参与争夺，但你不是看不懂——恰恰是看懂了，才觉得没必要。你对"被推着走"有天然的抗拒，宁可慢，也不肯违心。别人以为你消极，其实你只是把力气省下来，用在自己真正认的地方。',
+    traits:[
+      {t:'看穿了，就懒得再争', d:'mou'},
+      {t:'不喜欢被人推着走', d:'yi'},
+      {t:'从不急着证明自己', d:'yi'}
+    ],
+    quote:'上善若水，水善利万物而不争。', from:'《道德经·第八章》',
+    echo:'你的选择里有一种很少见的从容：不抢，但也没放弃。你不是没有力量，是把力量藏在了不争里——这正是他把话说得那么短、却传了那么久的原因。'
+  },
+  {
+    name:'张良', dynasty:'汉', title:'谋圣', char:'张', fp:[3.6,6.7,2.4,5.0,2.1],
+    verdict:'你不抢头功，但整盘棋是你摆的。',
+    detail:'你做事的顺序和别人相反：先想清楚代价，再决定要不要动手。你能忍住不出手，也能在事成之后干净地走开——不邀功、不留恋。你对局面有种天生的距离感，所以你能看到别人看不到的那一步。',
+    traits:[
+      {t:'先算清代价，再决定动手', d:'mou'},
+      {t:'事成了就走开，不恋功名', d:'yi'},
+      {t:'该忍的时候，能一声不吭', d:'mou'}
+    ],
+    quote:'运筹策帷帐之中，决胜于千里之外。', from:'刘邦评张良·《史记·高祖本纪》',
+    echo:'你的答案透露一种清醒：你不追求站在台前，但你在意局面有没有按对的方向走。这种"退一步看全盘"的本能，正是他能在乱世里全身而退的原因。'
+  },
+  {
+    name:'司马迁', dynasty:'汉', title:'史圣', char:'司', fp:[3.4,3.0,5.4,1.2,6.7],
+    verdict:'你把最难咽的那口气，咽下去写成了千年。',
+    detail:'你有一种近乎固执的耐力：受了天大的委屈也不停手，因为心里有一件非做完不可的事。你不是不痛，是痛过之后更懂人——所以你写别人时，笔下总有温度。你用活着把话说完了。',
+    traits:[
+      {t:'受了天大的委屈也不停手', d:'ren'},
+      {t:'心里有一件非做完不可的事', d:'ren'},
+      {t:'疼过之后，更懂别人', d:'qing'}
+    ],
+    quote:'人固有一死，或重于泰山，或轻于鸿毛。', from:'司马迁《报任安书》',
+    echo:'你的选择指向同一种信念：事情没做完，就不算完。你不是不疼，是知道疼不能改变什么、但做完可以——这正是他把那部书写出来的原因。'
+  },
+  {
+    name:'蔡文姬', dynasty:'汉', title:'旷世才女', char:'蔡', fp:[2.5,5.2,6.0,3.1,2.7],
+    verdict:'你身上有一种被反复碾过、却还记得住温柔的东西。',
+    detail:'你记得住每一次离别，记得住别人早就忘掉的细节。你什么都看得明白，却不肯用清醒去伤害谁。你的才气不是锋芒，是一种安静的准确——不刻意显，但一开口就是别人说不出的那句。',
+    traits:[
+      {t:'记得住每一次离别', d:'qing'},
+      {t:'什么都看得清楚，却不骗自己', d:'mou'},
+      {t:'才气不用刻意显', d:'qing'}
+    ],
+    quote:'人生几何时，怀忧终年岁。', from:'蔡琰《悲愤诗》',
+    echo:'你的答案里有一条很细的线：越是经历过失去，越舍不得对人心狠。这不是软弱，是一种清醒之后的慈悲——这正是她能把苦难写成诗的原因。'
+  },
+  {
+    name:'嵇康', dynasty:'魏晋', title:'竹林名士', char:'嵇', fp:[3.2,2.1,3.8,5.6,4.9],
+    verdict:'你活得比谁都散，但脊梁比谁都直。',
+    detail:'你不喜欢被安排，也不肯为了好过而改脾气。表面看你随性、爱清静、喜欢一个人待着，可一旦触到你认的死理，你比谁都硬。你的洒脱不是不在乎，是只在乎很少的几件事，然后为它站到底。',
+    traits:[
+      {t:'宁可不出仕，也不改脾气', d:'yi'},
+      {t:'骨子里不肯低头', d:'ren'},
+      {t:'喜欢自己一个人待着', d:'yi'}
+    ],
+    quote:'越名教而任自然。', from:'嵇康《释私论》',
+    echo:'你的选择有个矛盾又动人的地方：你看起来最不较真，实际最较真。你放弃的是俗世的好处，守住的是自己的形状——这正是他临刑前还弹完一曲的原因。'
+  },
+  {
+    name:'玄奘', dynasty:'唐', title:'三藏法师', char:'玄', fp:[5.6,3.4,3.6,1.2,6.0],
+    verdict:'别人说不可能，你只当是路远。',
+    detail:'你身上有一种不讲道理的坚持：定下的事，十几年也不动摇；越说不可能，你越要去。你不是不怕，是把怕收起来继续走。你相信一件事最好的验证方式，就是走到它面前。',
+    traits:[
+      {t:'定下的事，十几年不动摇', d:'ren'},
+      {t:'越说不可能，你越要去', d:'zhi'},
+      {t:'路再远，也一天一天地走', d:'ren'}
+    ],
+    quote:'宁可就西而死，岂归东而生。', from:'慧立、彦悰《大慈恩寺三藏法师传》',
+    echo:'你的答案里有一种很罕见的确定性：你不靠热情出发，靠决定出发。所以你能走别人走不完的路——这正是他一个人穿过沙漠的原因。'
+  },
+  {
+    name:'王维', dynasty:'唐', title:'诗佛', char:'维', fp:[1.2,2.1,5.2,6.2,4.7],
+    verdict:'你不是没有欲望，是把欲望放进了山水里。',
+    detail:'热闹跟你没什么关系，但你不孤僻——你只是觉得山、水、云、鸟比人群更能听懂你。你有一种安静的翻译能力：一句话，就能说出别人一整片说不出的心情。你不争，但心里一直有数。',
+    traits:[
+      {t:'热闹跟你没关系，山水有', d:'yi'},
+      {t:'一句话能说出别人一片心情', d:'qing'},
+      {t:'不争，但心里一直有数', d:'qing'}
+    ],
+    quote:'行到水穷处，坐看云起时。', from:'王维《终南别业》',
+    echo:'你的选择指向一种很高的从容：走到没路了也不慌，坐下来看看云。你不是逃避生活，是用另一种方式把生活过完整——这正是他晚年只写山水的原因。'
+  },
+  {
+    name:'岳飞', dynasty:'宋', title:'岳武穆', char:'岳', fp:[8.5,1.4,3.6,1.2,5.2],
+    verdict:'你把一辈子押在一件你觉得对的事上。',
+    detail:'你认准一件事就不分心，也不太会替自己打算。你能扛住所有人的反对，却很少把自己的委屈拿出来说——你觉得那不重要。你的目标感强到近乎朴素：既然是对的事，就做到底，别的以后再说。',
+    traits:[
+      {t:'认准的事，不分心也不留后路', d:'zhi'},
+      {t:'扛得住所有人反对你', d:'ren'},
+      {t:'自己的委屈，从不拿出来说', d:'ren'}
+    ],
+    quote:'莫等闲，白了少年头，空悲切。', from:'岳飞《满江红》',
+    echo:'你的答案里有一种很直的东西：你不算计得失，只认对不对。这种活法会吃亏，但也会让一个人被记住很久——这正是他一生只做一件事的原因。'
+  },
+  {
+    name:'辛弃疾', dynasty:'宋', title:'词中之龙', char:'辛', fp:[6.3,4.5,3.8,1.8,3.4],
+    verdict:'你一身本事没处使，就把它写成了不甘。',
+    detail:'你既能上马也能提笔，心里那团火一直没灭。你什么都看得透，看得透却不肯认输——这让你比谁都累，也比谁都活得有分量。你不是不会转弯，是转不过心里那道弯。',
+    traits:[
+      {t:'能上马，也能提笔', d:'zhi'},
+      {t:'心里的火，一直没灭', d:'zhi'},
+      {t:'什么都看得透，却不肯认输', d:'mou'}
+    ],
+    quote:'醉里挑灯看剑，梦回吹角连营。', from:'辛弃疾《破阵子·为陈同甫赋壮词以寄之》',
+    echo:'你的选择里有一种不甘心的分量：你不缺本事，缺的只是一个能用的地方。所以你把没说出口的话，全写进了别处——这正是他一生写词的原因。'
+  },
+  {
+    name:'李时珍', dynasty:'明', title:'药圣', char:'珍', fp:[1.9,5.8,1.8,1.2,9.3],
+    verdict:'你不信书上写的，只信自己看见的。',
+    detail:'你有一种笨得惊人的耐心：一件小事做三十年也不嫌慢。你不迷信权威，凡是不确定的事，宁可亲自去看一遍。你的目标不在热闹处，在那些没人愿意一遍遍核对的细节里。',
+    traits:[
+      {t:'一件小事做三十年，也不嫌慢', d:'ren'},
+      {t:'不信书上写的，自己去看', d:'mou'},
+      {t:'走遍山野，只为核对一味药', d:'ren'}
+    ],
+    quote:'身如逆流船，心比铁石坚。', from:'相传李时珍少年明志诗',
+    echo:'你的答案指向一种很实在的坚持：不图快，不图名，只图这件事最后是对的。你相信慢就是快——这正是他花二十七年改一遍书的原因。'
   }
 ];
 
@@ -1035,9 +1167,10 @@ function figureProfile(fp){
    为什么不直接比距离：十几道题能到达的五维空间是受限的——
    一个维度顶满，其余维度必然被压低。所以要比的是"形状"，
    也就是"哪几维相对更强"，这正是皮尔逊相关做的事。
-   11 位古人的指纹并非手工设定，而是从可达作答空间里，
-   按"性格签名 + 最大最小距离分散"反向筛选出来的画像
-   （扩到 16 题后已用坐标上升法逐一复核，11/11 仍然可达）。 */
+   22 位古人的指纹并非手工设定，而是从可达作答空间里，
+   按"性格签名 + 最大最小距离分散"反向求解出来的画像。
+   扩到 22 位后已用坐标上升法在 12 个随机抽题局上复核：22/22 全部可达，
+   两两形状相关最大 0.872，契合度分位数与 11 位版完全一致（82/89/97）。 */
 function pearson(a, b){
   let ma=0, mb=0;
   DK.forEach(k=>{ ma += a[k]; mb += b[k]; });
