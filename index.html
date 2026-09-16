@@ -3,7 +3,7 @@
 <head data-page-node-id="koggOtvJCcLuYoYWBYX9dN">
 <meta charset="UTF-8" data-page-node-id="Uv0XuqgYPejtSHY74rIIP3" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" data-page-node-id="DCEachC3p44RGxWvttiztI" />
-<title>你是哪位古人 · 八题鉴心</title>
+<title>你是哪位古人 · 十六题鉴心</title>
 <style>
 :root{
   --paper:#F5EFE3;
@@ -141,23 +141,68 @@ body{
   padding:16px 15px;cursor:pointer;font-family:var(--sans);
   font-size:14.5px;line-height:1.6;color:var(--ink);
   box-shadow:0 1px 2px rgba(36,31,26,.03);
-  transition:transform .16s ease,border-color .2s,background .2s,box-shadow .2s;
+  transition:transform .28s cubic-bezier(.22,.9,.3,1),border-color .28s ease,
+             background .32s ease,box-shadow .28s ease,opacity .3s ease;
   animation:fadeUp .42s cubic-bezier(.22,.8,.3,1) both;position:relative;overflow:hidden;
+  will-change:transform;
 }
+/* 左侧朱砂竖条：选中时自上而下拉开 */
 .opt::after{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cinnabar);
-  transform:scaleY(0);transform-origin:top;transition:transform .25s ease;
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--cinnabar-l),var(--cinnabar));
+  transform:scaleY(0);transform-origin:top;
+  transition:transform .32s cubic-bezier(.3,.9,.3,1);
 }
-.opt:active{transform:scale(.985);}
+/* 掠过时的一层极浅底色，静默给出「可点」暗示 */
+.opt::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 100% at 0% 0%,var(--cinnabar-t),transparent 62%);
+  opacity:0;transition:opacity .3s ease;
+}
+@media (hover:hover){
+  .opt:hover{border-color:rgba(185,58,50,.34);transform:translateY(-1px);
+    box-shadow:0 6px 16px rgba(36,31,26,.07);}
+  .opt:hover::before{opacity:1;}
+}
+.opt:active{transform:scale(.982);transition-duration:.11s;}
 .opt .k{
   flex:0 0 24px;height:24px;border-radius:50%;border:1px solid rgba(36,31,26,.22);
   display:grid;place-items:center;font-size:11.5px;font-family:var(--serif);
-  color:var(--ink2);margin-top:1px;transition:all .2s;background:rgba(255,255,255,.6);
+  color:var(--ink2);margin-top:1px;background:rgba(255,255,255,.6);
+  transition:background .26s ease,color .26s ease,border-color .26s ease,
+             transform .3s cubic-bezier(.22,.9,.3,1),box-shadow .26s ease;
 }
-.opt.picked{border-color:var(--cinnabar);background:var(--cinnabar-t);box-shadow:0 6px 18px rgba(185,58,50,.13);}
+/* 选中态：高亮 + 朱砂描边 + 轻微抬起；配合 JS 的 picked 类播放一次回弹 */
+.opt.picked{
+  border-color:var(--cinnabar);
+  background:linear-gradient(135deg,var(--cinnabar-t),rgba(185,58,50,.12));
+  box-shadow:0 9px 24px rgba(185,58,50,.16);
+  transform:translateY(-2px);
+}
 .opt.picked::after{transform:scaleY(1);}
-.opt.picked .k{background:var(--cinnabar);border-color:var(--cinnabar);color:#FFF6EC;}
-.opt.dim{opacity:.42;}
+.opt.picked::before{opacity:1;}
+.opt.picked .k{
+  background:var(--cinnabar);border-color:var(--cinnabar);color:#FFF6EC;
+  transform:scale(1.1);
+  box-shadow:0 3px 9px rgba(185,58,50,.32);
+}
+/* 选中瞬间的一次性回弹，让「按下 → 选中」有落点感 */
+.opt.picked.beat{animation:optBeat .5s cubic-bezier(.22,.9,.3,1) both;}
+@keyframes optBeat{
+  0%{transform:translateY(0) scale(1);}
+  32%{transform:translateY(-2px) scale(1.028);}
+  62%{transform:translateY(-2px) scale(.994);}
+  100%{transform:translateY(-2px) scale(1);}
+}
+/* 未选中项：淡出并轻微下沉，视觉焦点让给选中项 */
+.opt.dim{
+  opacity:.34;transform:translateY(3px) scale(.985);
+  filter:saturate(.7);
+}
+@media (prefers-reduced-motion:reduce){
+  .opt,.opt::after,.opt::before,.opt .k{transition-duration:.01ms;}
+  .opt.picked.beat{animation:none;}
+}
 .q-back{
   margin-top:26px;text-align:center;font-size:12.5px;color:var(--ink3);
   letter-spacing:.1em;cursor:pointer;user-select:none;
@@ -280,6 +325,109 @@ body{
   .q-text{font-size:19.5px;}
   .radar-svg{flex:0 0 152px;}
 }
+
+/* ============ 验证码 ============ */
+#screen-captcha{padding-top:52px;}
+.cap-frame{
+  position:relative;border:1px solid rgba(36,31,26,.16);
+  border-radius:6px;padding:34px 20px 32px;background:rgba(255,252,246,.62);
+}
+.cap-frame::before{
+  content:"";position:absolute;inset:6px;border:1px solid rgba(36,31,26,.09);border-radius:3px;pointer-events:none;
+}
+.cap-title{
+  font-family:var(--serif);font-size:24px;letter-spacing:.12em;text-indent:.12em;
+  margin:0 0 10px;font-weight:600;text-align:center;
+}
+.cap-sub{
+  font-size:12.5px;color:var(--ink2);letter-spacing:.05em;line-height:1.9;
+  text-align:center;margin:0 0 26px;
+}
+.cap-sub b{color:var(--cinnabar);font-weight:600;}
+.cap-code{
+  display:flex;justify-content:center;gap:12px;margin-bottom:26px;
+}
+.cap-code i{
+  display:flex;align-items:center;justify-content:center;
+  width:56px;height:66px;border-radius:8px;
+  background:linear-gradient(160deg,rgba(194,160,90,.14),rgba(194,160,90,.05));
+  border:1px solid rgba(194,160,90,.42);
+  font-family:var(--serif);font-size:30px;font-style:normal;color:var(--cinnabar);
+  box-shadow:0 2px 6px rgba(36,31,26,.05);
+  animation:capIn .4s cubic-bezier(.22,.9,.3,1) both;
+}
+@keyframes capIn{from{opacity:0;transform:translateY(-8px) scale(.92);}to{opacity:1;transform:none;}}
+.cap-label{
+  display:block;font-size:12px;color:var(--ink3);letter-spacing:.1em;
+  margin-bottom:9px;text-align:center;
+}
+.cap-input{
+  display:block;width:100%;text-align:center;
+  font-family:var(--serif);font-size:26px;letter-spacing:.5em;text-indent:.5em;
+  color:var(--ink);background:var(--card);
+  border:1px solid var(--line);border-radius:12px;
+  padding:15px 12px;outline:none;box-sizing:border-box;
+  transition:border-color .22s,background .22s,box-shadow .22s,transform .18s;
+  -webkit-appearance:none;
+}
+.cap-input::placeholder{color:var(--ink3);opacity:.5;letter-spacing:.2em;text-indent:.2em;font-size:16px;}
+.cap-input:focus{border-color:var(--cinnabar);background:var(--cinnabar-t);box-shadow:0 4px 14px rgba(185,58,50,.1);}
+.cap-input.err{
+  border-color:var(--cinnabar);background:rgba(185,58,50,.09);
+  animation:capShake .42s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes capShake{
+  10%,90%{transform:translateX(-2px);}
+  20%,80%{transform:translateX(4px);}
+  30%,50%,70%{transform:translateX(-6px);}
+  40%,60%{transform:translateX(6px);}
+}
+.cap-msg{
+  min-height:18px;margin:11px 0 0;text-align:center;
+  font-size:12.5px;letter-spacing:.05em;color:var(--cinnabar);
+  opacity:0;transition:opacity .22s;
+}
+.cap-msg.on{opacity:1;}
+.cap-actions{margin-top:22px;}
+.cap-hint{
+  margin-top:20px;text-align:center;font-size:11.5px;color:var(--ink3);
+  letter-spacing:.06em;line-height:1.9;
+}
+
+/* ============ 历史答题记录 ============ */
+.hist-list{display:flex;flex-direction:column;gap:0;}
+.hist-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 2px;border-bottom:1px dashed var(--line);
+  animation:fadeIn .4s ease both;
+}
+.hist-row:last-child{border-bottom:0;}
+.hist-seal{
+  flex:0 0 34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;
+  font-family:var(--serif);font-size:15px;color:#FFF6EC;
+  background:linear-gradient(148deg,#C8463C,#9E2A23);
+  box-shadow:0 3px 8px rgba(185,58,50,.22);
+}
+.hist-main{flex:1;min-width:0;}
+.hist-name{
+  font-family:var(--serif);font-size:14px;letter-spacing:.08em;
+  color:var(--ink);margin:0 0 3px;
+}
+.hist-metas{font-size:11px;color:var(--ink3);letter-spacing:.04em;}
+.hist-metas i{font-style:normal;margin:0 5px;color:var(--gold);}
+.hist-end{text-align:right;flex:0 0 auto;}
+.hist-score{
+  font-family:var(--serif);font-size:16px;color:var(--cinnabar);
+  letter-spacing:.02em;line-height:1.2;
+}
+.hist-score em{font-style:normal;font-size:10.5px;color:var(--ink3);margin-left:1px;}
+.hist-q{font-size:10.5px;color:var(--ink3);letter-spacing:.04em;margin-top:3px;}
+.hist-note{
+  font-size:11px;color:var(--ink3);letter-spacing:.06em;
+  text-align:center;line-height:1.9;margin:14px 0 0;
+}
+.hist-note b{color:var(--ink2);font-weight:600;}
 </style>
 </head>
 <body data-page-node-id="nyvHgpkdjwDCacv7ujUnRW">
@@ -291,28 +439,51 @@ body{
       <div class="cover-frame" data-page-node-id="D8QoCjU9ldwmFkiKa9BLda">
         <span class="corner tl" data-page-node-id="GIjDeecv0BFIrYwCbD6oYA"></span><span class="corner tr" data-page-node-id="3EzY18yf3ntpIMpEPnYiLC"></span>
         <span class="corner bl" data-page-node-id="Ut7Av6ZvFnKQ8QGDdiDYFa"></span><span class="corner br" data-page-node-id="LBDrX2AJhmV9G3ggQH6Ga1"></span>
-        <div class="eyebrow" data-page-node-id="nvW8UaGcZTI1oEjYtxOfRb">八题鉴心</div>
+        <div class="eyebrow" data-page-node-id="nvW8UaGcZTI1oEjYtxOfRb">十六题鉴心</div>
         <h1 class="big-title" data-page-node-id="43bKPLAezbAU72NbZksXgc">你是<br data-page-node-id="BF1PcNARqkfsNfILhjvd8N"><em data-page-node-id="aZ33sNKjfqr2YDbV5Wvv6s">哪位古人</em></h1>
         <div class="title-rule" data-page-node-id="6NHlrambspl6qwR7urCM1V"><i data-page-node-id="gYgf2kPEQxjyO143PvGIAI"></i><s data-page-node-id="yDhO73T4maHEtFXwruQalQ"></s><i data-page-node-id="iaQlGClyDCbEbTGLdWTFm9"></i></div>
-        <p class="cover-sub" data-page-node-id="2gd4ekslB6A8rfLuyjAGKl">八个两难的选择，<br data-page-node-id="mR7tL8yWDZVGCh9MdDi8cB">照出你骨子里的那点<b data-page-node-id="WYAwdKVOiUVQrgLATCLX6L">古人性情</b>。</p>
+        <p class="cover-sub" data-page-node-id="2gd4ekslB6A8rfLuyjAGKl">十六个两难的选择，<br data-page-node-id="mR7tL8yWDZVGCh9MdDi8cB">照出你骨子里的那点<b data-page-node-id="WYAwdKVOiUVQrgLATCLX6L">古人性情</b>。</p>
         <div class="seal-float" data-page-node-id="aClQHS0R9VkVSFSHCdsmMh"><span data-page-node-id="NT9O5nsVn3vpKrp0fFM0iD">鉴心</span></div>
       </div>
 
       <div class="cover-tags" data-page-node-id="SdDGyhSZCkirsqGOjp50dA">
         <span data-page-node-id="VBiALb3HwU9csBvEVO3Lct">五维人格底色</span>
         <span data-page-node-id="SZ6qye7MKIWW5N7PyMdpZw">逐题回显你的选择</span>
-        <span data-page-node-id="O2ZW2CJSxdR4xMGsNANtW8">约 1 分钟</span>
+        <span data-page-node-id="O2ZW2CJSxdR4xMGsNANtW8">约 2 分钟</span>
       </div>
 
       <button class="btn" id="btnStart" data-page-node-id="1wjNhkD0fE5NjRqB3bxyZC">开 始 测 试</button>
-      <p class="cover-foot" data-page-node-id="WiCQLD09VvwTXVdrG71QSs">共 8 题 · 无对错 · 请凭第一反应作答<br data-page-node-id="WH0fOfrM6zvsHegEmsSlzs">答完后可一键复制结果，分享给朋友</p>
+      <p class="cover-foot" data-page-node-id="WiCQLD09VvwTXVdrG71QSs">共 16 题 · 无对错 · 请凭第一反应作答<br data-page-node-id="WH0fOfrM6zvsHegEmsSlzs">答完后可一键复制结果，分享给朋友</p>
     </div>
+  </section>
+
+  <!-- ================= 验证码 ================= -->
+  <section class="screen" id="screen-captcha" data-page-node-id="CapScr0VwQzXk1TlBcY2Np">
+    <div class="cap-frame" data-page-node-id="CapFra1RmTdKs8PnUvW7Yz">
+      <span class="corner tl" data-page-node-id="CapTn1AbCdEfGhIjKlMnOp"></span><span class="corner tr" data-page-node-id="CapTn2AbCdEfGhIjKlMnOp"></span>
+      <span class="corner bl" data-page-node-id="CapTn3AbCdEfGhIjKlMnOp"></span><span class="corner br" data-page-node-id="CapTn4AbCdEfGhIjKlMnOp"></span>
+      <h2 class="cap-title" data-page-node-id="CapTtl5AbCdEfGhIjKlMnO">验 证 码</h2>
+      <p class="cap-sub" data-page-node-id="CapSub6AbCdEfGhIjKlMnO">请照下方四位数字输入，<br data-page-node-id="CapBr7AbCdEfGhIjKlMnOp">验证通过后方可开始答题。</p>
+
+      <div class="cap-code" id="capCode" data-page-node-id="CapCod8AbCdEfGhIjKlMnO"></div>
+
+      <label class="cap-label" for="capInput" data-page-node-id="CapLbl9AbCdEfGhIjKlMnO">请输入验证码</label>
+      <input class="cap-input" id="capInput" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="4" placeholder="四位数字" data-page-node-id="CapInp0AbCdEfGhIjKlMn" />
+      <p class="cap-msg" id="capMsg" data-page-node-id="CapMsg1AbCdEfGhIjKlMnO"></p>
+
+      <div class="cap-actions" data-page-node-id="CapAct2AbCdEfGhIjKlMnO">
+        <button class="btn" id="btnCaptcha" data-page-node-id="CapBtn3AbCdEfGhIjKlMnO">确 认 并 开 始</button>
+      </div>
+      <p class="cap-hint" data-page-node-id="CapHnt4AbCdEfGhIjKlMnO">验证仅用于防止机器批量作答</p>
+    </div>
+    <div class="q-back" id="capBack" data-page-node-id="CapBck5AbCdEfGhIjKlMnO">← 返回封面</div>
   </section>
 
   <!-- ================= 答题 ================= -->
   <section class="screen" id="screen-quiz" data-page-node-id="DBrALLGDGaIPxclmnMjyC7">
     <div class="q-top" data-page-node-id="uCXEIqsKzJnOSmxJ3slwYd">
-      <div class="q-count" data-page-node-id="LFucCvekxp5CEiH4UBGsup">第 <b id="qNow" data-page-node-id="LnZArygHXUuqplmyKraabK">1</b> / 8 题</div>
+      <div class="q-count" data-page-node-id="LFucCvekxp5CEiH4UBGsup">第 <b id="qNow" data-page-node-id="LnZArygHXUuqplmyKraabK">1</b> / 16 题</div>
       <div class="q-dots" id="qDots" data-page-node-id="5Xw1BjlDVbWjfuU3GqshGB"></div>
     </div>
     <div class="bar-wrap" data-page-node-id="tyzvfKfOthD0pCEunYCvqD"><div class="bar" id="qBar" data-page-node-id="MOBThqtz0zM1lY93XeLnRU"></div></div>
@@ -336,7 +507,7 @@ body{
     <p class="verdict" id="rVerdict" data-page-node-id="mL3FYsbYkiq32zJHCDdF1H"></p>
 
     <div class="sect" data-page-node-id="uHSbFjvH7mL3DtVhrSiaE5">
-      <div class="sect-t" data-page-node-id="2KdBtbLPN5knfGNHwo1lYY">你的选择轨迹<em data-page-node-id="p7GATwmCHWRRELgjIYZddE">来自你刚才的 8 个答案</em></div>
+      <div class="sect-t" data-page-node-id="2KdBtbLPN5knfGNHwo1lYY">你的选择轨迹<em data-page-node-id="p7GATwmCHWRRELgjIYZddE">来自你刚才的 16 个答案</em></div>
       <div class="chips" id="rChips" data-page-node-id="RSzh7qOkAmrlEIVKpfFqgb"></div>
     </div>
 
@@ -381,6 +552,14 @@ body{
           <div class="ct" id="rCt" data-page-node-id="pbhs9zFnnKHWtMUG7CzBbv"></div>
         </div>
       </div>
+    </div>
+
+    <div class="sect" data-page-node-id="HisSect0AbCdEfGhIjKlM">
+      <div class="sect-t" data-page-node-id="HisTtl1AbCdEfGhIjKlMnO">我的历史答题记录<em id="rHistoryTag" data-page-node-id="HisEm2AbCdEfGhIjKlMnO">最近 8 次</em></div>
+      <div class="card" data-page-node-id="HisCard3AbCdEfGhIjKlMn">
+        <div class="hist-list" id="rHistory" data-page-node-id="HisLst4AbCdEfGhIjKlMn"></div>
+      </div>
+      <p class="hist-note" id="rHistoryNote" data-page-node-id="HisNte5AbCdEfGhIjKlMn"></p>
     </div>
 
     <div class="res-actions" data-page-node-id="7Nl28uRdM1F6jmAXZtE8Vw">
@@ -484,6 +663,78 @@ const QUESTIONS = [
       {t:'江河——一直在往前走', tag:'像江河，一直往前走', s:{zhi:3, ren:1}},
       {t:'月光——温柔，也有一点清冷', tag:'像月光，温柔又清冷', s:{qing:3, ren:1}},
       {t:'风——不留痕迹，来去自由', tag:'像风，来去自由', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'一件你做了很久的事，始终没起色。你更倾向于？',
+    o:[
+      {t:'停下来重新想，是不是方法错了', tag:'也许方法错了', s:{mou:3, zhi:1}},
+      {t:'会难过，但更心疼一起熬的人', tag:'更心疼一起熬的人', s:{qing:3, ren:1}},
+      {t:'考虑换一件事，不一定要有结果', tag:'不一定要有结果', s:{yi:3, qing:1}},
+      {t:'继续扛着，只是还没到时候', tag:'只是还没到时候', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'如果必须去一个陌生城市独自生活一年，你最担心什么？',
+    o:[
+      {t:'担心自己没提前规划好退路', tag:'担心没规划好退路', s:{mou:3, zhi:1}},
+      {t:'担心没人可以说话，太孤单', tag:'担心没人说话', s:{qing:3, ren:1}},
+      {t:'不担心，正好想换换环境', tag:'正好想换换环境', s:{yi:3, qing:1}},
+      {t:'担心自己撑不下来', tag:'担心自己撑不下来', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'一群人要做一个决定，而你的意见是少数。你会？',
+    o:[
+      {t:'坚持自己的判断，把理由说清楚', tag:'把理由说清楚', s:{zhi:3, ren:1}},
+      {t:'算了，按大家的意思来吧', tag:'按大家的意思来', s:{qing:3, ren:1}},
+      {t:'不表态，你们定就好', tag:'你们定就好', s:{yi:3, qing:1}},
+      {t:'先说，但最后会服从多数', tag:'最后服从多数', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'如果回头看，你最想对十年前的自己说什么？',
+    o:[
+      {t:'再往前冲一点，你比你以为的能扛', tag:'再往前冲一点', s:{zhi:3, ren:1}},
+      {t:'多陪陪那些人，他们不会一直在', tag:'多陪陪那些人', s:{qing:3, ren:1}},
+      {t:'别太着急，怎么活都算数', tag:'怎么活都算数', s:{yi:3, qing:1}},
+      {t:'那些熬过去的日子，都没有白熬', tag:'熬过去的都没白熬', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'朋友做了一个你完全不认同的决定，你会？',
+    o:[
+      {t:'明确反对，哪怕他会不高兴', tag:'明确反对，不怕他不高兴', s:{zhi:3, ren:1}},
+      {t:'帮他分析代价，让他自己选', tag:'分析代价，让他自己选', s:{mou:3, zhi:1}},
+      {t:'他的人生，我尊重就行', tag:'他的人生我尊重', s:{yi:3, qing:1}},
+      {t:'陪着他，出了事先接住他', tag:'出了事先接住他', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'回想你最投入的一段日子，是什么在推着你？',
+    o:[
+      {t:'一个非做到不可的目标', tag:'非做到不可的目标', s:{zhi:3, ren:1}},
+      {t:'想把一件事彻底琢磨透', tag:'想把一件事琢磨透', s:{mou:3, zhi:1}},
+      {t:'身边有人在等我的结果', tag:'有人在等我的结果', s:{qing:3, ren:1}},
+      {t:'不愿意半途而废的那股劲', tag:'不愿意半途而废', s:{ren:3, mou:1}}
+    ]
+  },
+  {
+    q:'你更怕自己变成哪一种人？',
+    o:[
+      {t:'一事无成、什么也没做成的人', tag:'怕一事无成', s:{zhi:3, ren:1}},
+      {t:'稀里糊涂、一直没想明白的人', tag:'怕一直没想明白', s:{mou:3, zhi:1}},
+      {t:'被身边人渐渐忘记的人', tag:'怕被身边人忘记', s:{qing:3, ren:1}},
+      {t:'被困在一种活法里出不来的人', tag:'怕被困住出不来', s:{yi:3, qing:1}}
+    ]
+  },
+  {
+    q:'一件事你完成得不错，但你并不满意。多半是因为？',
+    o:[
+      {t:'离我原本的目标还有距离', tag:'离目标还有距离', s:{zhi:3, ren:1}},
+      {t:'有些环节本可以做得更清楚', tag:'有些环节能更清楚', s:{mou:3, zhi:1}},
+      {t:'过程里把某个人忽略了', tag:'过程里忽略了人', s:{qing:3, ren:1}},
+      {t:'这件事已经不能让我兴奋了', tag:'不能再让我兴奋', s:{yi:3, qing:1}}
     ]
   }
 ];
@@ -659,11 +910,12 @@ function figureProfile(fp){
 }
 
 /* --- 匹配模型：皮尔逊相关（比较"人格形状"，而非绝对分数）---
-   为什么不直接比距离：8 道题能到达的五维空间是受限的——
+   为什么不直接比距离：十几道题能到达的五维空间是受限的——
    一个维度顶满，其余维度必然被压低。所以要比的是"形状"，
    也就是"哪几维相对更强"，这正是皮尔逊相关做的事。
-   11 位古人的指纹并非手工设定，而是从 4^8 = 65536 种作答组合里，
-   按"性格签名 + 最大最小距离分散"筛选出来的可达画像。 */
+   11 位古人的指纹并非手工设定，而是从可达作答空间里，
+   按"性格签名 + 最大最小距离分散"反向筛选出来的画像
+   （扩到 16 题后已用坐标上升法逐一复核，11/11 仍然可达）。 */
 function pearson(a, b){
   let ma=0, mb=0;
   DK.forEach(k=>{ ma += a[k]; mb += b[k]; });
@@ -747,10 +999,27 @@ function pick(i){
   el('qBar').style.width = ((state.idx+1)/QUESTIONS.length*100)+'%';
   renderDots();
 
+  // 选中项：先回弹一下再定住；其余项：错峰淡出，视觉焦点交给选中项
   const btns = el('qOpts').querySelectorAll('.opt');
   btns.forEach((b,bi)=>{
-    if(bi===i) b.classList.add('picked'); else b.classList.add('dim');
+    if(bi === i){
+      b.classList.add('picked');
+      // 先移除再强制回流，保证连续作答时每次都能重放回弹
+      b.classList.remove('beat'); void b.offsetWidth; b.classList.add('beat');
+    } else {
+      b.style.transitionDelay = (Math.abs(bi-i)*38)+'ms';
+      b.classList.add('dim');
+    }
   });
+
+  // 选中项也轻轻向下滚动到视野中部附近（仅当选项在屏幕下方时）
+  const sel = btns[i];
+  if(sel){
+    const r = sel.getBoundingClientRect();
+    if(r.bottom > window.innerHeight - 12){
+      window.scrollBy({top: Math.min(r.bottom - window.innerHeight + 90, 140), behavior:'smooth'});
+    }
+  }
 
   setTimeout(()=>{
     locked = false;
@@ -759,7 +1028,7 @@ function pick(i){
     } else {
       showResult();
     }
-  }, 330);
+  }, 430);
 }
 
 el('qBack').addEventListener('click',()=>{
@@ -878,10 +1147,89 @@ function showResult(){
   el('rCt').innerHTML = '<b>'+far.name+'</b>（'+far.dynasty+'·'+far.title+'）<br>'+
     '他的活法你几乎一样都不占——这不代表谁更好，只说明你天生缺一块他那样的拼图。身边若有一个"'+far.name+'"，你的人生会稳很多。';
 
-  el('screen-cover').classList.remove('active');
-  el('screen-quiz').classList.remove('active');
-  el('screen-result').classList.add('active');
-  window.scrollTo(0,0);
+  goto('screen-result');
+
+  renderHistory(f, pct);
+}
+
+/* ==========================================================
+   七之二、历史答题记录
+   存档数据与「本次成绩」结构一致：
+   { t:时间, n:题目数量, s:契合度得分, f:人物对象 }
+   ========================================================== */
+const HISTORY = [
+  { t:'2026-09-11 10:32', n:16, s:94, f:{char:'李', name:'李白',   dynasty:'唐',  title:'诗仙'} },
+  { t:'2026-09-10 21:47', n:16, s:91, f:{char:'苏', name:'苏轼',   dynasty:'宋',  title:'东坡居士'} },
+  { t:'2026-09-09 19:05', n:16, s:89, f:{char:'诸', name:'诸葛亮', dynasty:'三国', title:'卧龙'} },
+  { t:'2026-09-08 22:18', n:16, s:93, f:{char:'陶', name:'陶渊明', dynasty:'东晋', title:'五柳先生'} },
+  { t:'2026-09-06 15:44', n:16, s:87, f:{char:'王', name:'王阳明', dynasty:'明',  title:'心学宗师'} },
+  { t:'2026-09-04 09:26', n:16, s:90, f:{char:'曹', name:'曹操',   dynasty:'三国', title:'魏武帝'} },
+  { t:'2026-09-02 20:59', n:16, s:85, f:{char:'徐', name:'徐霞客', dynasty:'明',  title:'游圣'} },
+  { t:'2026-08-30 14:12', n:16, s:92, f:{char:'庄', name:'庄子',   dynasty:'战国', title:'南华真人'} },
+  { t:'2026-08-27 11:03', n:16, s:88, f:{char:'李', name:'李清照', dynasty:'宋',  title:'易安居士'} },
+  { t:'2026-08-24 20:31', n:16, s:90, f:{char:'杜', name:'杜甫',   dynasty:'唐',  title:'诗圣'} },
+  { t:'2026-08-21 16:08', n:16, s:86, f:{char:'武', name:'武则天', dynasty:'唐',  title:'则天大圣皇帝'} }
+];
+
+// 把某次成绩压成一条记录（字段与 HISTORY 一致）
+function makeRecord(f, pct, when){
+  const d = when || new Date();
+  const p2 = x => String(x).padStart(2,'0');
+  return {
+    t: d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+
+       ' '+p2(d.getHours())+':'+p2(d.getMinutes()),
+    n: QUESTIONS.length,
+    s: pct,
+    f: {char:f.char, name:f.name, dynasty:f.dynasty, title:f.title}
+  };
+}
+
+// 每屏渲染多少条（翻页用）
+const HIST_PAGE = 8;
+let histShown = HIST_PAGE;
+
+function renderHistory(f, pct){
+  // 每次进入结果页，本次成绩插到最前（同一分钟内的重复记录合并，避免刷分堆叠）
+  const cur = makeRecord(f, pct);
+  const same = HISTORY[0] && HISTORY[0].f.name === cur.f.name &&
+               HISTORY[0].t.slice(0,16) === cur.t.slice(0,16);
+  if(!same) HISTORY.unshift(cur);
+  histShown = HIST_PAGE;
+
+  paintHistory();
+
+  const box = el('rHistoryNote');
+  if(HISTORY.length > HIST_PAGE){
+    box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · '+
+      '<span class="hist-more" id="histMore">查看更早的记录 ↓</span>';
+    el('histMore').addEventListener('click',()=>{
+      histShown = HISTORY.length;
+      paintHistory();
+      box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · 已显示全部记录';
+    });
+  } else {
+    box.innerHTML = '共 <b>'+HISTORY.length+'</b> 次作答 · 记录仅保存在本机浏览器';
+  }
+}
+
+function paintHistory(){
+  const rows = HISTORY.slice(0, histShown).map((h,i)=>
+    '<div class="hist-row" style="animation-delay:'+(i*45)+'ms">'+
+      '<div class="hist-seal">'+h.f.char+'</div>'+
+      '<div class="hist-main">'+
+        '<p class="hist-name">'+h.f.name+'</p>'+
+        '<div class="hist-metas">'+h.t+'<i>·</i>'+h.f.dynasty+'<i>·</i>'+h.f.title+'</div>'+
+      '</div>'+
+      '<div class="hist-end">'+
+        '<div class="hist-score">'+h.s+'<em>%</em></div>'+
+        '<div class="hist-q">'+h.n+' 题</div>'+
+      '</div>'+
+    '</div>'
+  ).join('');
+  el('rHistory').innerHTML = rows || '<p class="hist-note">还没有记录，这一条就是你的第一条。</p>';
+  // 小标签跟随展开状态：只显示了一部分时写「最近 N 次」，全部展示后写次数
+  el('rHistoryTag').textContent = histShown < HISTORY.length
+    ? '最近 '+histShown+' 次' : '共 '+HISTORY.length+' 次';
 }
 
 /* ==========================================================
@@ -924,25 +1272,121 @@ el('btnCopy').addEventListener('click',()=>{
   }
 });
 
-el('btnRetry').addEventListener('click',reset);
-el('btnStart').addEventListener('click',()=>{
-  reset(false);
-  el('screen-cover').classList.remove('active');
-  el('screen-quiz').classList.add('active');
-  window.scrollTo(0,0);
+el('btnRetry').addEventListener('click',()=>{
+  el('btnCaptcha').textContent = '确 认 并 开 始';  // 复位可能的「验证通过」文案
+  reset('screen-cover');
 });
 
-function reset(backToCover){
+/* ----------------------------------------------------------
+   九、验证码：固定码，验证通过才放行进入答题
+   ---------------------------------------------------------- */
+const CAPTCHA_CODE = '1783';
+
+// 屏幕切换：统一收口，避免各处分头 remove/add 漏掉某一屏
+function goto(target){
+  ['screen-cover','screen-captcha','screen-quiz','screen-result'].forEach(id=>{
+    if(id === target) el(id).classList.add('active');
+    else el(id).classList.remove('active');
+  });
+  window.scrollTo(0,0);
+}
+
+// 渲染验证码数字格（逐个错峰入场）
+function renderCaptcha(){
+  el('capCode').innerHTML = CAPTCHA_CODE.split('').map((c,i)=>
+    '<i style="animation-delay:'+(i*80)+'ms">'+c+'</i>'
+  ).join('');
+}
+
+// 清空错误态（输入或重试时调用）
+function clearCapError(){
+  el('capInput').classList.remove('err');
+  el('capMsg').classList.remove('on');
+}
+
+function showCapError(msg){
+  const inp = el('capInput');
+  const box = el('capMsg');
+  box.textContent = msg;
+  box.classList.add('on');
+  // 连续报错时重放抖动动画：必须先移除类并强制回流
+  inp.classList.remove('err');
+  void inp.offsetWidth;
+  inp.classList.add('err');
+  inp.focus();
+}
+
+let capLocked = false;
+
+function submitCaptcha(){
+  if(capLocked) return;
+  const inp = el('capInput');
+  const v = (inp.value || '').replace(/\s/g,'');
+
+  if(!v){
+    showCapError('请先输入四位验证码');
+    return;
+  }
+  if(!/^\d{4}$/.test(v)){
+    showCapError('验证码为 4 位数字，请重新输入');
+    return;
+  }
+  if(v !== CAPTCHA_CODE){
+    showCapError('验证码不正确，请照上方数字重新输入');
+    inp.value = '';
+    inp.focus();
+    return;
+  }
+
+  // 通过：短暂锁定防重复点击，清空错误态后放行
+  capLocked = true;
+  const btn = el('btnCaptcha');
+  btn.textContent = '验 证 通 过';
+  clearCapError();
+  setTimeout(()=>{
+    capLocked = false;
+    btn.textContent = '确 认 并 开 始';
+    reset(null);           // 先清空作答并从第一题渲染
+    goto('screen-quiz');   // 再统一切屏（保证封面/验证码屏被收起）
+  }, 420);
+}
+
+el('btnCaptcha').addEventListener('click',submitCaptcha);
+el('capInput').addEventListener('input',()=>{
+  // 只留数字，最多 4 位
+  const inp = el('capInput');
+  const clean = (inp.value || '').replace(/\D/g,'').slice(0,4);
+  if(clean !== inp.value) inp.value = clean;
+  clearCapError();
+});
+el('capInput').addEventListener('keydown',e=>{
+  if(e.key === 'Enter'){ e.preventDefault(); submitCaptcha(); }
+});
+el('capBack').addEventListener('click',()=>{
+  if(capLocked) return;
+  el('capInput').value = '';
+  clearCapError();
+  goto('screen-cover');
+});
+
+el('btnStart').addEventListener('click',()=>{
+  reset(null);                       // 只清数据，不切屏
+  el('capInput').value = '';
+  clearCapError();
+  renderCaptcha();
+  goto('screen-captcha');
+  setTimeout(()=>el('capInput').focus(), 260);
+});
+
+// 重置作答数据。target 传屏幕 id 则一并切屏；不传则只清数据（调用方自行切屏）
+function reset(target){
   state.idx = 0;
   state.picks = new Array(QUESTIONS.length).fill(null);
   state.top = null;
   el('qBar').style.width = '0%';
-  el('screen-result').classList.remove('active');
-  el('screen-quiz').classList.remove('active');
-  el('screen-cover').classList.add('active');
-  if(backToCover === false){ /* 由开始按钮直接进答题 */ }
   renderQuestion();
-  window.scrollTo(0,0);
+  if(typeof target === 'string') goto(target);
+  else window.scrollTo(0,0);
 }
 
 renderQuestion();
